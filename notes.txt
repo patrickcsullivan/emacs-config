@@ -1,0 +1,57 @@
+C-g        Exit minibuffer
+
+C-<k>               Most common commands
+M-<k>               Slightly less common commands
+C-x <c>             Common commands, such as file manipulation
+C-c <c>             Specialized commands, often mode-specific
+M-x-<long-name>     Any command
+
+EDITING 
+M-q		    fill-paragraph
+
+DEV
+
+M-x shell           Open shell in new window
+
+NAVIGATION
+
+C-v		    Page down
+M-v		    Page up
+M-x goto-line / <n> Go to line
+C-l 	      	    Redraw and center
+
+C-f		    Forward
+C-b		    Back
+C-n		    Next line
+C-p		    Previous line
+C-a		    Beginning of line
+C-e		    End of line
+
+FILE CONTROLS
+
+C-x C-f		    Find file
+C-x C-v		    Find alternate file
+C-x s		    Save some buffers
+C-x C-s		    Save buffer
+C-x C-w		    write-file (Save As)
+C-x C-c		    Close
+C-x u		    Undo
+
+HELP
+
+C-h k <c>	    describe-key
+
+BUFFERS
+
+C-x C-b		    Buffer list
+C-x b <name>	    Change buffer
+C-x ->		    Cycle buffer
+C-x k		    Kill buffer
+
+C-x o		    Cycle window
+C-x 0		    Kill window
+C-x 1		    Kill all but current window
+C-x 2		    Split window horizontally
+C-x 3		    Split window vertically
+C-x 4 <c>	    Execute command in new window
+
