@@ -70,20 +70,31 @@
 
 ;; ----------
 
+;; LAYOUT
+
+(use-package centaur-tabs
+  :ensure t
+  :config
+  (setq centaur-tabs-set-bar 'left
+	centaur-tabs-height 24
+	centaur-tabs-set-modified-marker t
+	centaur-tabs-modified-marker "∙")
+  (centaur-tabs-mode t))
+
+;; ----------
+
 ;; IDE
 
 ;; TODO
-;; - Company: buffer completion X
-;; - Projectile: projects       X
 ;; - Helm: completion window
-;; - Theme
 ;; - Flycheck: syntax checking
 
 ;; Run using `M-x global-commnad-log-mode`
-;; Then `M-x clm/toggle-command-log-buffer`
+;; followed by `M-x clm/toggle-command-log-buffer`.
 (use-package command-log-mode)
 
 ;; Command completion window
+;; Double press `Tab` after partial command.
 ;; Use either ido or helm but not both.
 (use-package helm
   :ensure t
@@ -119,7 +130,20 @@
 (use-package company
   :ensure t
   :init
-  (add-hook 'after-init-hook 'global-company-mode))
+  (add-hook 'after-init-hook 'global-company-mode)) ; TODO: Decrease wait time
+
+;; Intelligent errors (squiggly lines)
+(use-package flycheck
+  :ensure t
+  :init
+  (global-flycheck-mode))
+
+;; Smart text selection
+(use-package expand-region
+  :ensure t
+  :bind
+  ("C-=" . er/expand-region)
+  ("C--" . er/contract-region))
 
 ;; ----------
 
@@ -137,7 +161,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (dashboard helm projectile doom-themes elixir-mode treemacs-magit treemacs-projectile use-package treemacs rainbow-delimiters magit flycheck doom-modeline company command-log-mode))))
+    (centaur-tabs expand-region dashboard helm projectile doom-themes elixir-mode treemacs-magit treemacs-projectile use-package treemacs rainbow-delimiters magit flycheck doom-modeline company command-log-mode))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
