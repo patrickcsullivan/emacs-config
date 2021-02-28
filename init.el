@@ -64,7 +64,8 @@
     (setq dashboard-items '((recents . 5)
 			    (projects . 5)))
     (setq dashboard-set-file-icons t)
-    (setq dashboard-set-heading-icons t))
+    (setq dashboard-set-heading-icons t)
+    (setq dashboard-set-footer nil))
   :config
   (dashboard-setup-startup-hook))
 
@@ -152,7 +153,23 @@
 (use-package elixir-mode
   :ensure t)
 
-; ----------
+;; ----------
+
+;; AGDA
+
+(load-file (let ((coding-system-for-read 'utf-8))
+                (shell-command-to-string "agda-mode locate")))
+
+;; Auto-load agda-mode for .agda and .lagda.md.
+;; Emacs uses a Markdown mode for .md by default so we must override.
+(setq auto-mode-alist
+   (append
+     '(("\\.agda\\'" . agda2-mode)
+       ("\\.lagda.md\\'" . agda2-mode))
+     auto-mode-alist))
+
+;; ----------
+
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -168,3 +185,4 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
