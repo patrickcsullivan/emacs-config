@@ -1,22 +1,36 @@
 (setq inhibit-startup-message t)
 
 ; Basic UI
-(tool-bar-mode -1)        ; Enable toolbar.
-(tooltip-mode 1)          ; Enable tooltips.
-(menu-bar-mode 1)         ; Enable menu bar.
-(set-fringe-mode 10)      ; Give some breathing room.
-(setq visible-bell t)     ; Use visiual bell instead of audio.
-(global-hl-line-mode)     ; Highlight current line.
-(delete-selection-mode 1) ; Typing deletes selected text.
-(show-paren-mode 1)       ; Highlight matching paren on hover.
+(tool-bar-mode -1)              ; Enable toolbar.
+(tooltip-mode 1)                ; Enable tooltips.
+(menu-bar-mode 1)               ; Enable menu bar.
+(set-fringe-mode 10)            ; Give some breathing room.
+(setq-default cursor-type 'bar) ; Enable bar cursor.
+(setq visible-bell t)           ; Use visiual bell instead of audio.
+(global-hl-line-mode)           ; Highlight current line.
+(delete-selection-mode 1)       ; Typing deletes selected text.
+(show-paren-mode 1)             ; Highlight matching paren on hover.
 (add-hook 'prog-mode-hook 'display-line-numbers-mode) ; Show line numbers in programming modes.
 
-; Font, theme
+;; Word-wrap in text mode but not in programming modes.
+(add-hook 'text-mode-hook '(lambda ()
+    (setq truncate-lines nil
+          word-wrap t)))
+(add-hook 'prog-mode-hook '(lambda ()
+    (setq truncate-lines t
+          word-wrap nil)))
+
+; Font size
 (set-face-attribute 'default nil :height 150)
-(load-theme 'tango-dark)
 
 ;; Backups
 (setq backup-directory-alist '(("." . "~/.emacs-bak")))
+
+;; Scroll one line at a time (less "jumpy" than defaults).
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; One line at a time.
+(setq mouse-wheel-progressive-speed nil) ;; Don't accelerate scrolling.
+(setq mouse-wheel-follow-mouse 't) ;; Scroll window under mouse.
+(setq scroll-step 1) ;; Keyboard scroll one line at a time.
 
 ;; ----------
 

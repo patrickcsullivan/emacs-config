@@ -1,5 +1,9 @@
-*
-
-!.gitignore
-!init.el
-!notes.txt
+/auto-save-list
+/.session
+/session.*
+\#*
+/elpa
+/elpa-*
+/recentf
+/projectile-bookmarks.eld
+.cache/
