@@ -1,7 +1,125 @@
+;; ---------------------------------------------------------
+
+;; ------ Basic Emacs commands
+
+;; C-x C-f
+;; Find and load file.
+
+;; C-x C-s
+;; Save.
+
+;; C-x k
+;; Kill buffer.
+
+;; C-x 4 f
+;; Find file in a new split window.
+
+;; ------ Buffer
+
+;; C-x b
+;; Change buffer.
+
+;; C-x 4 b
+;; Change buffer in a new split window.
+
+;; ------ Movement
+
+;; C-f / C-b
+;; Forward / backward one character.
+
+;; M-f / M-b
+;; Forward / backward one word.
+
+;; C-n / C-p
+;; Next / previous line.
+
+;; C-a / C-e
+;; Beginning / end of current line.
+
+;; M-x goto-line <line>
+;; Go to line <line>.
+
+;; ------ Editing
+
+;; C-x u
+;; Undo.
+
+;; C-x C-;
+;; Comment.
+
+;; ------ Commands
+
+;; C-g
+;; Abort command.
+
+;; C-h <type> <target>
+;; Describe <target>.
+;; Eg: C-h f load-theme
+
+;; ------ Shell
+
+;; M-x shell
+;; Shell in new buffer.
+
+;; ------ Executing
+
+;; M-x eval-buffer
+;; Eval buffer.
+
+;; C-x C-e
+;; Eval last s-expression.
+
+;; C-h v <var>
+;; Show the value of <var>.
+
+;; Shift-M-:
+;; Enter an s-expression to evaluate.
+
+;; ---------------------------------------------------------
+
+;; Global keybindings.
+
+;; Make ESC abort command like C-g.
+;(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+
+;; ---------------------------------------------------------
+
+;; Initialize package sources.
+
+;; M-x list-packages runs the built-in package manager. Shows packages available in ELPA.
+;; use-package is another package manager that uses MELPA.
+
+(require 'package)
+
+(setq package-archives '(("melpa" . "https://melpa.org/packages/")
+			 ("org" . "https://orgmode.org/elpa/")
+			 ("melpa" . "https://elpa.gnu.org/packages/")))
+
+(package-initialize)
+(unless package-archive-contents
+  (package-refresh-contents))
+
+;; Initialize use-pacakge on non-Linux platforms.
+(unless (package-installed-p 'use-package)
+  (package-install 'use-package))
+
+(require 'use-package)
+(setq use-package-always-ensure t)
+
+;; ---------------------------------------------------------
+
+;; Clean up Emacs UI, making it more minimal.
+
 (setq inhibit-startup-message t)
 
-; Basic UI
-(tool-bar-mode -1)              ; Enable toolbar.
+;; (scroll-bar-mode -1) ; Disable visible scrollbar.
+;; (tool-bar-mode -1) ; Disable the toolbar.
+;; (tooltip-mode -1) ; Disable the tooltips.
+;; (set-fringe-mode 10) ; Give some breathing room.
+;; (menu-bar-mode -1) ; Disable the menu bar.
+;; (setq visible-bell t) ; Turn on visual (instead of audio) bell.
+
+(tool-bar-mode -1)              ; Disable toolbar.
 (tooltip-mode 1)                ; Enable tooltips.
 (menu-bar-mode 1)               ; Enable menu bar.
 (set-fringe-mode 10)            ; Give some breathing room.
@@ -10,21 +128,20 @@
 (global-hl-line-mode)           ; Highlight current line.
 (delete-selection-mode 1)       ; Typing deletes selected text.
 (show-paren-mode 1)             ; Highlight matching paren on hover.
-(add-hook 'prog-mode-hook 'display-line-numbers-mode) ; Show line numbers in programming modes.
 
-;; Word-wrap in text mode but not in programming modes.
-(add-hook 'text-mode-hook '(lambda ()
-    (setq truncate-lines nil
-          word-wrap t)))
-(add-hook 'prog-mode-hook '(lambda ()
-    (setq truncate-lines t
-          word-wrap nil)))
+;; Set up Doom mode line.
+(use-package doom-modeline
+  :ensure t
+  :init (doom-modeline-mode 1))
 
-; Font size
-(set-face-attribute 'default nil :height 150)
+(column-number-mode) ; Show column number in mode line.
+(global-display-line-numbers-mode t) ; Show line numbers.
 
-;; Backups
-(setq backup-directory-alist '(("." . "~/.emacs-bak")))
+;; Disable line numbers for some modes.
+(dolist (mode '(org-mode-hook
+		term-mode-hook
+		eshell-mode-hook))
+  (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 ;; Scroll one line at a time (less "jumpy" than defaults).
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; One line at a time.
@@ -32,144 +149,70 @@
 (setq mouse-wheel-follow-mouse 't) ;; Scroll window under mouse.
 (setq scroll-step 1) ;; Keyboard scroll one line at a time.
 
-;; ----------
+;; ---------------------------------------------------------
 
-;; PACKAGE INIT
+;; General help and productivity.
 
-;; Initialize package sources.
-(require 'package)
-;(add-to-list 'package-archives `("melpa" . "https://melp.org/packages/") t)
-(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
-(package-initialize)
+;; Autocompletion using Ivy.
 
-; Refresh package contents on fresh system.
-(unless package-archive-contents
-  (package-refresh-contents))
+;; This will turn on autocompletion for commands such as M-x and possibly other things.
+;; (use-package ivy
+;;   :diminish
+;;   :bind (("C-s" . swiper)
+;; 	 :map ivy-minibuffer-map
+;; 	 ("TAB" . ivy-alt-done)
+;; 	 ("C-l" . ivy-alt-done)
+;; 	 ("C-j" . ivy-next-line)
+;; 	 ("C-k" . ivy-previous-line)
+;; 	 :map ivy-switch-buffer-map
+;; 	 ("C-k" . ivy-previous-line)
+;; 	 ("C-l" . ivy-alt-done)
+;; 	 ("C-d" . ivy-switch-buffer-kill)
+;; 	 :map ivy-reverse-i-search-map
+;; 	 ("C-k" . ivy-previous-line)
+;; 	 ("C-d" . ivy-reverse-i-search-kill))
+;;   :config
+;;   (ivy-mode 1))
 
-; Initialize use-package on non-Linux platforms.
-(unless (package-installed-p 'use-package)
-  (package-install 'use-package))
+;; Show pop-up when you start key binding to show what keys are available.
+(use-package which-key
+  :init (which-key-mode)
+  :diminish which-key-mode
+  :config
+  ; Show available bindings immediately.
+  (setq which-key-idle-delay 0))
 
-(require 'use-package)
-(setq use-package-always-ensure t)
+;; ---------------------------------------------------------
 
-;; ----------
+;; Demoing.
 
-;; THEME, DASHBOARD
+;; Command log mode shows command history in a buffer.
+;; Run M-x global-command-log-mode to enable it for every buffer.
+;; Then run M-x clm/toggle-command-log-buffer
+(use-package command-log-mode)
 
-;; Install icons on system.
-;; Need to run `M-x all-the-icons-install fonts` once on fresh system.
-(use-package all-the-icons
-  :ensure t)
+;; ---------------------------------------------------------
 
+;; Theme.
+
+;(load-theme 'wombat)
 (use-package doom-themes
   :ensure t
   :config
-  (load-theme 'doom-one t))
+  (load-theme 'doom-palenight t))
 
-(use-package doom-modeline
-  :ensure t
-  :hook (after-init . doom-modeline-mode))
+(set-face-attribute 'default nil :height 140)
 
-(use-package dashboard
-  :ensure t
-  :init
-  (progn
-    (setq dashboard-items '((recents . 5)
-			    (projects . 5)))
-    (setq dashboard-set-file-icons t)
-    (setq dashboard-set-heading-icons t)
-    (setq dashboard-set-footer nil))
-  :config
-  (dashboard-setup-startup-hook))
+;; ---------------------------------------------------------
 
-;; ----------
+;; Global programming mode settings.
 
-;; LAYOUT
+(use-package rainbow-delimiters
+  :hook (prog-mode . rainbow-delimiters-mode))
 
-(use-package centaur-tabs
-  :ensure t
-  :config
-  (setq centaur-tabs-set-bar 'left
-	centaur-tabs-height 24
-	centaur-tabs-set-modified-marker t
-	centaur-tabs-modified-marker "∙")
-  (centaur-tabs-mode t))
+;; ---------------------------------------------------------
 
-;; ----------
-
-;; IDE
-
-;; TODO
-;; - Helm: completion window
-;; - Flycheck: syntax checking
-
-;; Run using `M-x global-commnad-log-mode`
-;; followed by `M-x clm/toggle-command-log-buffer`.
-(use-package command-log-mode)
-
-;; Command completion window
-;; Double press `Tab` after partial command.
-;; Use either ido or helm but not both.
-(use-package helm
-  :ensure t
-  :config (helm-mode 1))
-
-;; Command completion minibuffer
-;; Use either ido or helm but not both.
-;; (setq ido-everywhere t)
-;; (setq ido-enable-flex-matching t)
-;; (ido-mode t)
-
-;; Project management
-;; C-x p ... for projectile commands
-(use-package projectile
-  :ensure t
-  :config
-  (define-key projectile-mode-map (kbd "C-x p") 'projectile-command-map)
-  (projectile-mode +1))
-
-;; Sidebar navigation with extras
-;; F8 to toggle nav tree
-(use-package treemacs
-  :ensure t
-  :bind
-  (:map global-map
-	([f8] . treemacs))
-  :config
-  (progn
-    (setq treemacs-is-never-other-window t))
-  (treemacs-filewatch-mode t))
-
-;; Code completion
-(use-package company
-  :ensure t
-  :init
-  (add-hook 'after-init-hook 'global-company-mode)) ; TODO: Decrease wait time
-
-;; Intelligent errors (squiggly lines)
-(use-package flycheck
-  :ensure t
-  :init
-  (global-flycheck-mode))
-
-;; Smart text selection
-(use-package expand-region
-  :ensure t
-  :bind
-  ("C-=" . er/expand-region)
-  ("C--" . er/contract-region))
-
-;; ----------
-
-;; ELIXIR
-
-(use-package elixir-mode
-  :ensure t)
-
-;; ----------
-
-;; AGDA
+;; Agda.
 
 (load-file (let ((coding-system-for-read 'utf-8))
                 (shell-command-to-string "agda-mode locate")))
@@ -182,21 +225,15 @@
        ("\\.lagda.md\\'" . agda2-mode))
      auto-mode-alist))
 
-;; ----------
+;; ---------------------------------------------------------
 
+;; Text editing.
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   (quote
-    (centaur-tabs expand-region dashboard helm projectile doom-themes elixir-mode treemacs-magit treemacs-projectile use-package treemacs rainbow-delimiters magit flycheck doom-modeline company command-log-mode))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+;; Word-wrap in text mode but not in programming modes.
+(add-hook 'text-mode-hook '(lambda ()
+    (setq truncate-lines nil
+          word-wrap t)))
+(add-hook 'prog-mode-hook '(lambda ()
+    (setq truncate-lines t
+          word-wrap nil)))
 
