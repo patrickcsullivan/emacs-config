@@ -112,13 +112,6 @@
 
 (setq inhibit-startup-message t)
 
-;; (scroll-bar-mode -1) ; Disable visible scrollbar.
-;; (tool-bar-mode -1) ; Disable the toolbar.
-;; (tooltip-mode -1) ; Disable the tooltips.
-;; (set-fringe-mode 10) ; Give some breathing room.
-;; (menu-bar-mode -1) ; Disable the menu bar.
-;; (setq visible-bell t) ; Turn on visual (instead of audio) bell.
-
 (tool-bar-mode -1)              ; Disable toolbar.
 (tooltip-mode 1)                ; Enable tooltips.
 (menu-bar-mode 1)               ; Enable menu bar.
@@ -145,7 +138,7 @@
 
 ;; Scroll one line at a time (less "jumpy" than defaults).
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; One line at a time.
-(setq mouse-wheel-progressive-speed nil) ;; Don't accelerate scrolling.
+(setq mouse-wheel-progressive-speed 1) ;; Accelerate scrolling.
 (setq mouse-wheel-follow-mouse 't) ;; Scroll window under mouse.
 (setq scroll-step 1) ;; Keyboard scroll one line at a time.
 
@@ -184,6 +177,13 @@
 
 ;; ---------------------------------------------------------
 
+;; Set location for backups and autosaves.
+
+(setq backup-directory-alist '(("." . "~/.emacs.d/backups"))
+      auto-save-file-name-transforms '(("." "~/.emacs.d/auto-saves")))
+
+;; ---------------------------------------------------------
+
 ;; Demoing.
 
 ;; Command log mode shows command history in a buffer.
@@ -196,12 +196,40 @@
 ;; Theme.
 
 ;(load-theme 'wombat)
+
+;; (use-package doom-themes
+;;   :ensure t
+;;   :config
+;;   (load-theme 'doom-palenight t))
+
 (use-package doom-themes
   :ensure t
   :config
-  (load-theme 'doom-palenight t))
+  (load-theme 'doom-tomorrow-day t))
 
-(set-face-attribute 'default nil :height 140)
+(set-face-attribute 'default nil :height 160)
+
+;; ---------------------------------------------------------
+
+;; Windows and file navigation.
+
+;; (use-package treemacs
+;;   :ensure t)
+
+;; Configure the M-1 ... M-8 keys for switching between buffers 1 ... 8.
+(use-package winum
+  :ensure t
+  :config
+  ;; (global-set-key (kbd "M-0") 'treemacs-select-window)
+  (global-set-key (kbd "M-1") 'winum-select-window-1)
+  (global-set-key (kbd "M-2") 'winum-select-window-2)
+  (global-set-key (kbd "M-3") 'winum-select-window-3)
+  (global-set-key (kbd "M-4") 'winum-select-window-4)
+  (global-set-key (kbd "M-5") 'winum-select-window-5)
+  (global-set-key (kbd "M-6") 'winum-select-window-6)
+  (global-set-key (kbd "M-7") 'winum-select-window-7)
+  (global-set-key (kbd "M-8") 'winum-select-window-8)
+  (winum-mode))
 
 ;; ---------------------------------------------------------
 
@@ -237,3 +265,15 @@
     (setq truncate-lines t
           word-wrap nil)))
 
+;; ------
+
+(use-package projectile
+  :diminish projectile-mode
+  :config (projectile-mode)
+  :custom ((projectile-completion-system 'ivy))
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
+  :init
+  ;; NOTE: Set this to the folder where you keep your Git repos!
+  (when (file-directory-p "~/work")
+    (setq projectile-project-search-path '("~/work"))))
